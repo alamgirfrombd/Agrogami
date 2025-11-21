@@ -1,0 +1,65 @@
+AgrogamiPH/
+│
+├── (1) dbinfo.env                                   # DB credentials
+├── (2) db_connect.py                                # Database connection setup
+├── (3) login.py                                      # Login handler (Streamlit)
+│
+├── (4) requirements.txt                              # Dependencies
+├── (5) .streamlit/
+│   └── config.toml                                   # Streamlit UI config
+│
+├── (6) .vscode/
+│   └── settings.json                                 # VS Code settings
+│
+│
+├── app/                                              # CORE APPLICATION
+│   ├── (7) __init__.py                               # Package init
+│   │
+│   ├── layout/                                       # COMMON UI COMPONENTS
+│   │   ├── (8) header.py                             # Top navigation bar
+│   │   ├── (9) sidebar.py                            # Side menu
+│   │   └── (10) footer.py                            # Footer UI
+│   │
+│   ├── static/                                       # STATIC FILES
+│   │   ├── (11) logo.png                             # App Logo
+│   │   └── (12) style.css                            # Theme Stylesheet
+│
+│
+├── dev_tools/                                        # DEVELOPMENT UTILITIES
+│   ├── (13) Project_Structure.html                   # Structure viewer
+│   ├── (14) run.py                                   # Dev run script
+│   └── (15) show_structure.py                        # Folder tree generator
+│
+│
+├── pages/                                            # STREAMLIT PAGES
+│   ├── (16) admin_dashboard.py                       # Admin dashboard
+│   ├── (17) home.py                                  # Home page
+│   ├── (18) shop_dashboard.py                        # Shop overview
+│
+│   ├── inventory_management/                         # Inventory module
+│   │   ├── (19) categories_page.py                   # Categories UI
+│   │   ├── (20) products_page.py                     # Products UI
+│   │   ├── (21) warehouse_page.py                    # Warehouses UI
+│   │   └── (22) inventory_page.py                    # Stock overview
+│
+│   ├── sales_management/                             # Sales module
+│   │   ├── (23) customers_page.py                    # Customer UI
+│   │   ├── (24) orders_page.py                       # Orders UI
+│   │   ├── (25) order_details_page.py                # Order items UI
+│   │   └── (26) payments_page.py                     # Payments UI
+│
+│   └── user_management/                              # User & RBAC module
+│       ├── (27) _role_manager.py                     # Role Manager
+│       ├── (28) _users.py                            # User CRUD
+│       ├── (29) _user_profiles.py                    # Profile editor
+│       ├── (30) _user_permissions.py                 # Permission editor
+│       ├── (31) _user_login_history.py               # Login history
+│       └── (32) _audit_logs.py                       # Audit logs UI
+│
+│
+├── uploads/                                          # FILE UPLOADS
+│   └── profile_pics/                                 # User pictures
+│       ├── (33) user_1.JPG
+│       └── (34) user_3.jpeg
+│
+└── (35) run.py (if outside dev_tools) — *Not present now*

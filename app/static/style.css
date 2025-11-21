@@ -1,0 +1,301 @@
+/* ============================================================
+   AGROGAMIPH — LIGHT MODE OPTIMIZED STYLE (CLEAN, RESPONSIVE)
+   Replace your existing app/static/style.css with this file.
+   - Light-mode friendly
+   - Aligns table, sidebar, header, buttons, dialogs
+   - Removes dark-mode specific colors and glass effects
+============================================================ */
+
+:root{
+  --primary: #3366ff;
+  --accent: #22c55e;
+  --muted: #6b7280;
+  --bg: #ffffff;
+  --surface: #f7f8fb;
+  --card: #ffffff;
+  --border: #e6e9ee;
+  --text: #0f1724;
+  --soft-shadow: 0 6px 18px rgba(16,24,40,0.06);
+  --radius: 10px;
+  --pad: 12px;
+}
+
+/* --------------------
+   Global
+   -------------------- */
+html,body,#root,div[data-testid="stAppViewContainer"]{
+  background: var(--bg) !important;
+  color: var(--text) !important;
+  font-family: "Segoe UI", Roboto, -apple-system, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Ensure main content uses full width when sidebar hidden */
+div[data-testid="stAppViewContainer"]{
+  margin-left: 0 !important;
+  padding-left: 24px !important;
+  padding-right: 24px !important;
+}
+
+/* Sidebar (left column) */
+section[data-testid="stSidebar"]{
+  width: 260px !important;
+  background: var(--surface) !important;
+  border-right: 1px solid var(--border) !important;
+  padding: 18px !important;
+}
+
+/* Card like appearance for sidebar groups */
+.stSidebar .css-1v3fvcr, .stSidebar .css-1h8s3a3{
+  background: var(--card) !important;
+  border-radius: 12px !important;
+  box-shadow: var(--soft-shadow) !important;
+  padding: 10px !important;
+  margin-bottom: 12px !important;
+}
+
+/* Headline */
+h1, .stApp h1{ font-weight: 800; color: var(--text); }
+
+/* Inputs styling */
+.stTextInput label, .stSelectbox label, .stTextArea label{ color: var(--muted) !important; font-weight: 600; }
+.stTextInput input, .stSelectbox select, .stTextArea textarea{
+  background: #fff !important;
+  border: 1px solid var(--border) !important;
+  padding: 10px 12px !important;
+  border-radius: 8px !important;
+  color: var(--text) !important;
+}
+.stTextInput input:focus, .stSelectbox select:focus, .stTextArea textarea:focus{
+  box-shadow: 0 6px 24px rgba(51,102,255,0.08) !important;
+  border-color: var(--primary) !important;
+}
+
+/* Buttons */
+.stButton>button{
+  background: linear-gradient(90deg,var(--primary),#2856d6) !important;
+  color: #fff !important;
+  padding: 10px 14px !important;
+  border-radius: 8px !important;
+  font-weight: 700 !important;
+  border: none !important;
+  box-shadow: 0 8px 28px rgba(51,102,255,0.14) !important;
+}
+.stButton>button:active{ transform: translateY(1px) !important; }
+.stButton>button.secondary{ background: transparent !important; color: var(--primary) !important; border:1px solid var(--border) !important; box-shadow:none !important; }
+
+/* Error & success boxes */
+.error-box{ background: #fff5f5 !important; color:#a61b1b !important; border:1px solid rgba(166,27,27,0.08); padding:10px 12px; border-radius:8px; }
+.success-box{ background: #f0fdf4; color:#166534; border:1px solid rgba(22,101,52,0.08); padding:10px 12px; border-radius:8px; }
+
+/* Customer header and table rows */
+.customer-header{ display:flex; gap:8px; padding:10px 6px; font-size:13px; font-weight:700; color:var(--muted); border-bottom:1px solid var(--border); }
+.customer-table-row{ display:flex; gap:8px; padding:12px 6px; align-items:center; background:transparent; border-bottom:1px solid var(--border); }
+.customer-table-row:hover{ background:#fbfdff; }
+.customer-cell{ padding:4px 8px; font-size:14px; color:var(--text); }
+
+/* Alternate row subtle background (if you render with index odd/even) */
+.customer-table-row:nth-child(odd){ background:#ffffff; }
+.customer-table-row:nth-child(even){ background:#fbfbfc; }
+
+/* Action icon button wrapper */
+.icon-btn{ display:inline-block; }
+.icon-btn > button{ padding:6px 8px !important; border-radius:8px !important; border:1px solid var(--border) !important; background:#fff !important; box-shadow:none !important; }
+.icon-btn > button:hover{ background: linear-gradient(90deg,#eef3ff, #f6f9ff) !important; transform:translateY(-2px); }
+
+/* Pagination buttons */
+.stButton + .stButton > button{ min-width:110px !important; }
+
+/* Modal/dialog tweaks */
+.modal-overlay{ position:fixed; inset:0; background:rgba(15,23,36,0.35); display:flex; align-items:center; justify-content:center; }
+.modal-box{ width:720px; max-width:calc(100% - 40px); background:var(--card); border-radius:12px; padding:18px; box-shadow:var(--soft-shadow); }
+
+/* Footer */
+footer{ background: #0f1724; color:#fff; padding:14px 18px; border-top:1px solid rgba(255,255,255,0.02); }
+
+/* Responsive */
+@media (max-width: 900px){
+  section[data-testid="stSidebar"]{ display:none !important; }
+  div[data-testid="stAppViewContainer"]{ padding-left:16px !important; padding-right:16px !important; }
+  .customer-header{ font-size:12px; }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce){ *{ transition:none !important; animation:none !important; } }
+
+/* End of file - lightweight, light-mode first */
+
+/* =============================== */
+/* Side Bar     */
+/* =============================== */
+
+  /* Sidebar full background */
+
+        
+      /* Sidebar background */
+      section[data-testid="stSidebar"] {
+          background-color: #fdfdfd !important;
+          padding: 20px;
+      }
+
+      /* Sidebar text color */
+      section[data-testid="stSidebar"] * {
+          color: #222 !important;
+          font-size: 15px !important;
+          font-weight: 500 !important;
+      }
+
+      /* Radio button text visible */
+      div[role="radiogroup"] label {
+          color: #000 !important;
+          font-weight: 600 !important;
+      }
+
+      /* Selected radio option */
+      div[role="radiogroup"] div[aria-checked="true"] label {
+          color: #0a5cff !important;
+          font-weight: 700 !important;
+      }
+
+      /* Hover effect */
+      div[role="radiogroup"] div:hover {
+          background: rgba(10, 92, 255, 0.08) !important;
+          border-radius: 6px;
+      }
+
+      /* Header styling */
+      h3 {
+          color: #1a1a1a !important;
+          font-weight: 700 !important;
+      }
+
+      /* Sub-header */
+      h4, h5, h6 {
+          color: #444 !important;
+      }
+
+      /* Improve radio spacing */
+      div[role="radiogroup"] > label {
+          padding: 4px 0px !important;
+      }
+
+
+
+
+
+
+/* =============================== */
+/* PERFECT ACTION ICON BUTTONS     */
+/* =============================== */
+
+.icon-btn button {
+    width: 32px !important;
+    height: 32px !important;
+    padding: 0 !important;
+    margin: 0 3px !important;
+
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+
+    background: #ffffff !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 8px !important;
+
+    font-size: 16px !important;
+    color: var(--text) !important;
+
+    box-shadow: none !important;
+    transition: 0.15s ease-in-out !important;
+}
+
+.icon-btn button:hover {
+    background: #eef3ff !important;
+    border-color: #bcd0ff !important;
+    transform: translateY(-2px);
+}
+
+/* Remove Streamlit weird wrapper spacing */
+.icon-btn {
+    display: inline-flex;
+    gap: 6px;
+}
+
+
+
+/* ============================================================
+   User Profile Table Styling
+============================================================ */
+
+
+.profile-header-row {
+    display: grid;
+    grid-template-columns: 2.2fr 2.5fr 1.8fr 1.8fr 1.6fr 2fr;
+    padding: 8px 5px;
+    background: var(--card-bg);
+    border-radius: 8px;
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+.profile-row {
+    display: grid;
+    grid-template-columns: 2.2fr 2.5fr 1.8fr 1.8fr 1.6fr 2fr;
+    padding: 12px 5px;
+    background: var(--card-bg);
+    border-radius: 8px;
+    margin-top: 8px;
+    box-shadow: var(--card-shadow);
+    align-items: center;
+}
+.user-info-text {
+    font-weight: 600;
+    color: var(--text-color);
+}
+.user-info-sub {
+    color: var(--text-muted);
+    font-size: 12px;
+}
+.action-btn {
+    display: flex;
+    gap: 6px;
+}
+.action-btn .stButton > button {
+    padding: 4px 10px !important;
+    font-size: 12px !important;
+    border-radius: 5px !important;
+}
+.btn-view {
+    background-color: #4a90e2 !important;
+}
+.btn-edit {
+    background-color: #f39c12 !important;
+}
+.btn-del {
+    background-color: #d9534f !important;
+}
+
+
+/* ACTION BUTTON FIX */
+.action-btn-wrap {
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+}
+
+.action-btn-wrap button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    color: #fff;
+}
+
+/* Buttons */
+.btn-view { background:#4A90E2; }
+.btn-edit { background:#F39C12; }
+.btn-del  { background:#D9534F; }
+
+.btn-view:hover  { background:#357ABD; }
+.btn-edit:hover  { background:#E67E22; }
+.btn-del:hover   { background:#C9302C; }
