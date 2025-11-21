@@ -1,19 +1,25 @@
-import psycopg2
 import os
-from dotenv import load_dotenv
-from pathlib import Path
-
-env_path = Path(__file__).resolve().parent / "dbinfo.env"
-load_dotenv(env_path)
+import psycopg2
+import urllib.parse as urlparse
 
 def get_connection():
     try:
+        # Render uses DATABASE_URL
+        db_url = os.getenv("DATABASE_URL")
+
+        if not db_url:
+            raise Exception("❌ DATABASE_URL not found. Set it in Render Environment Variables.")
+
+        urlparse.uses_netloc.append("postgres")
+        url = urlparse.urlparse(db_url)
+
         conn = psycopg2.connect(
-            host=os.getenv("DB_HOST"),
-            port=os.getenv("DB_PORT"),
-            dbname=os.getenv("DB_NAME"),
-            user=os.getenv("DB_USER"),
-            password=os.getenv("DB_PASSWORD")
+            database=url.path[1:],
+            user=url.username,
+            password=url.password,
+            host=url.hostname,
+            port=url.port,
+            sslmode="require"
         )
         return conn
 
