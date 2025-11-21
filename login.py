@@ -71,9 +71,10 @@ if css_path.exists():
 # =====================================================
 st.markdown('<div class="login-wrapper">', unsafe_allow_html=True)
 
+
 st.markdown("""
     <div class="login-title">
-        🌾 Agrogami Power House
+        🌾 Agrogami Power Housec
     </div>
 """, unsafe_allow_html=True)
 
