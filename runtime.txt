@@ -1,3 +1,0 @@
-python-3.11.9git add .
-git commit -m "Fix: clean requirements for Render"
-git push
