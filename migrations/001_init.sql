@@ -1,53 +1,124 @@
---
--- PostgreSQL database dump
---
+-- PART 1: Extension, Sequences, and Table Definitions
+-- Cleaned for direct execution (no pg_dump meta-commands)
 
-\restrict NS7BC8Y3VgaundyEfn3Qd8X3tqYlLAfZJ5rJeTv1dSJkjfmG3sRTdBpSvEmBIIj
+-- 1) Extension
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- Dumped from database version 18.1
--- Dumped by pg_dump version 18.0
+-- 2) Sequences
+CREATE SEQUENCE IF NOT EXISTS public.auditlogs_auditid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 
--- Started on 2025-11-21 15:51:18
+CREATE SEQUENCE IF NOT EXISTS public.categories_categoryid_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET transaction_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
+CREATE SEQUENCE IF NOT EXISTS public.customers_customerid_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 
---
--- TOC entry 2 (class 3079 OID 16606)
--- Name: uuid-ossp; Type: EXTENSION; Schema: -; Owner: -
---
+CREATE SEQUENCE IF NOT EXISTS public.inventory_inventoryid_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public;
+CREATE SEQUENCE IF NOT EXISTS public.orderdetails_oderdetailid_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 
+CREATE SEQUENCE IF NOT EXISTS public.orders_orderid_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 
---
--- TOC entry 5215 (class 0 OID 0)
--- Dependencies: 2
--- Name: EXTENSION "uuid-ossp"; Type: COMMENT; Schema: -; Owner: 
---
+CREATE SEQUENCE IF NOT EXISTS public.payments_paymentid_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 
-COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UUIDs)';
+CREATE SEQUENCE IF NOT EXISTS public.products_productid_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 
+CREATE SEQUENCE IF NOT EXISTS public.roles_roleid_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 
-SET default_tablespace = '';
+CREATE SEQUENCE IF NOT EXISTS public.userloginhistory_loginid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 
-SET default_table_access_method = heap;
+CREATE SEQUENCE IF NOT EXISTS public.userpermissions_permissionid_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 
---
--- TOC entry 221 (class 1259 OID 16618)
--- Name: auditlogs; Type: TABLE; Schema: public; Owner: postgres
---
+CREATE SEQUENCE IF NOT EXISTS public.userprofiles_profileid_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 
-CREATE TABLE public.auditlogs (
+CREATE SEQUENCE IF NOT EXISTS public.users_userid_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE IF NOT EXISTS public.warehouse_warehouseid_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+-- 3) Tables
+
+-- auditlogs
+CREATE TABLE IF NOT EXISTS public.auditlogs (
     auditid bigint NOT NULL,
     userid integer,
     actiontype character varying(50) NOT NULL,
@@ -57,77 +128,18 @@ CREATE TABLE public.auditlogs (
     details text
 );
 
+ALTER TABLE public.auditlogs OWNER TO CURRENT_USER;
 
-ALTER TABLE public.auditlogs OWNER TO postgres;
-
---
--- TOC entry 220 (class 1259 OID 16617)
--- Name: auditlogs_auditid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public.auditlogs_auditid_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER SEQUENCE public.auditlogs_auditid_seq OWNER TO postgres;
-
---
--- TOC entry 5216 (class 0 OID 0)
--- Dependencies: 220
--- Name: auditlogs_auditid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public.auditlogs_auditid_seq OWNED BY public.auditlogs.auditid;
-
-
---
--- TOC entry 223 (class 1259 OID 16631)
--- Name: categories; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.categories (
+-- categories
+CREATE TABLE IF NOT EXISTS public.categories (
     categoryid integer NOT NULL,
     categoryname character varying(100) NOT NULL
 );
 
+ALTER TABLE public.categories OWNER TO CURRENT_USER;
 
-ALTER TABLE public.categories OWNER TO postgres;
-
---
--- TOC entry 222 (class 1259 OID 16630)
--- Name: categories_categoryid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public.categories_categoryid_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER SEQUENCE public.categories_categoryid_seq OWNER TO postgres;
-
---
--- TOC entry 5217 (class 0 OID 0)
--- Dependencies: 222
--- Name: categories_categoryid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public.categories_categoryid_seq OWNED BY public.categories.categoryid;
-
-
---
--- TOC entry 225 (class 1259 OID 16640)
--- Name: customers; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.customers (
+-- customers
+CREATE TABLE IF NOT EXISTS public.customers (
     customerid integer NOT NULL,
     customercode character varying(50) NOT NULL,
     fullname character varying(200) NOT NULL,
@@ -150,40 +162,10 @@ CREATE TABLE public.customers (
     updateddate timestamp without time zone
 );
 
+ALTER TABLE public.customers OWNER TO CURRENT_USER;
 
-ALTER TABLE public.customers OWNER TO postgres;
-
---
--- TOC entry 224 (class 1259 OID 16639)
--- Name: customers_customerid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public.customers_customerid_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER SEQUENCE public.customers_customerid_seq OWNER TO postgres;
-
---
--- TOC entry 5218 (class 0 OID 0)
--- Dependencies: 224
--- Name: customers_customerid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public.customers_customerid_seq OWNED BY public.customers.customerid;
-
-
---
--- TOC entry 231 (class 1259 OID 16683)
--- Name: inventory; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.inventory (
+-- inventory
+CREATE TABLE IF NOT EXISTS public.inventory (
     inventoryid integer NOT NULL,
     productid integer NOT NULL,
     warehouseid integer NOT NULL,
@@ -208,84 +190,24 @@ CREATE TABLE public.inventory (
     CONSTRAINT inventory_stockqty_check CHECK ((stockqty >= 0))
 );
 
+ALTER TABLE public.inventory OWNER TO CURRENT_USER;
 
-ALTER TABLE public.inventory OWNER TO postgres;
-
---
--- TOC entry 230 (class 1259 OID 16682)
--- Name: inventory_inventoryid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public.inventory_inventoryid_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER SEQUENCE public.inventory_inventoryid_seq OWNER TO postgres;
-
---
--- TOC entry 5219 (class 0 OID 0)
--- Dependencies: 230
--- Name: inventory_inventoryid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public.inventory_inventoryid_seq OWNED BY public.inventory.inventoryid;
-
-
---
--- TOC entry 235 (class 1259 OID 16740)
--- Name: orderdetails; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.orderdetails (
+-- orderdetails
+CREATE TABLE IF NOT EXISTS public.orderdetails (
     oderdetailid integer NOT NULL,
     orderid integer NOT NULL,
     productid integer NOT NULL,
     quantity integer NOT NULL,
     unitprice numeric(18,2) NOT NULL,
-    linetotal numeric(18,2) GENERATED ALWAYS AS (((quantity)::numeric * unitprice)) STORED,
+    linetotal numeric(18,2) GENERATED ALWAYS AS ((quantity::numeric * unitprice)) STORED,
     CONSTRAINT orderdetails_quantity_check CHECK ((quantity > 0)),
-    CONSTRAINT orderdetails_unitprice_check CHECK ((unitprice >= (0)::numeric))
+    CONSTRAINT orderdetails_unitprice_check CHECK ((unitprice >= 0::numeric))
 );
 
+ALTER TABLE public.orderdetails OWNER TO CURRENT_USER;
 
-ALTER TABLE public.orderdetails OWNER TO postgres;
-
---
--- TOC entry 234 (class 1259 OID 16739)
--- Name: orderdetails_oderdetailid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public.orderdetails_oderdetailid_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER SEQUENCE public.orderdetails_oderdetailid_seq OWNER TO postgres;
-
---
--- TOC entry 5220 (class 0 OID 0)
--- Dependencies: 234
--- Name: orderdetails_oderdetailid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public.orderdetails_oderdetailid_seq OWNED BY public.orderdetails.oderdetailid;
-
-
---
--- TOC entry 233 (class 1259 OID 16713)
--- Name: orders; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.orders (
+-- orders
+CREATE TABLE IF NOT EXISTS public.orders (
     orderid integer NOT NULL,
     ordernumber character varying(50) NOT NULL,
     customerid integer NOT NULL,
@@ -295,89 +217,29 @@ CREATE TABLE public.orders (
     discount numeric(18,2) DEFAULT 0 NOT NULL,
     tax numeric(10,2) DEFAULT 0 NOT NULL,
     totalamount numeric(18,2) DEFAULT 0 NOT NULL,
-    CONSTRAINT orders_discount_check CHECK ((discount >= (0)::numeric)),
-    CONSTRAINT orders_subtotal_check CHECK ((subtotal >= (0)::numeric)),
-    CONSTRAINT orders_tax_check CHECK ((tax >= (0)::numeric)),
-    CONSTRAINT orders_totalamount_check CHECK ((totalamount >= (0)::numeric))
+    CONSTRAINT orders_discount_check CHECK ((discount >= 0::numeric)),
+    CONSTRAINT orders_subtotal_check CHECK ((subtotal >= 0::numeric)),
+    CONSTRAINT orders_tax_check CHECK ((tax >= 0::numeric)),
+    CONSTRAINT orders_totalamount_check CHECK ((totalamount >= 0::numeric))
 );
 
+ALTER TABLE public.orders OWNER TO CURRENT_USER;
 
-ALTER TABLE public.orders OWNER TO postgres;
-
---
--- TOC entry 232 (class 1259 OID 16712)
--- Name: orders_orderid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public.orders_orderid_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER SEQUENCE public.orders_orderid_seq OWNER TO postgres;
-
---
--- TOC entry 5221 (class 0 OID 0)
--- Dependencies: 232
--- Name: orders_orderid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public.orders_orderid_seq OWNED BY public.orders.orderid;
-
-
---
--- TOC entry 237 (class 1259 OID 16755)
--- Name: payments; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.payments (
+-- payments
+CREATE TABLE IF NOT EXISTS public.payments (
     paymentid integer NOT NULL,
     orderid integer NOT NULL,
     paymentdate timestamp without time zone NOT NULL,
     amount numeric(18,2) NOT NULL,
     paymentmethod character varying(50) NOT NULL,
     transactionref character varying(200),
-    CONSTRAINT payments_amount_check CHECK ((amount >= (0)::numeric))
+    CONSTRAINT payments_amount_check CHECK ((amount >= 0::numeric))
 );
 
+ALTER TABLE public.payments OWNER TO CURRENT_USER;
 
-ALTER TABLE public.payments OWNER TO postgres;
-
---
--- TOC entry 236 (class 1259 OID 16754)
--- Name: payments_paymentid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public.payments_paymentid_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER SEQUENCE public.payments_paymentid_seq OWNER TO postgres;
-
---
--- TOC entry 5222 (class 0 OID 0)
--- Dependencies: 236
--- Name: payments_paymentid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public.payments_paymentid_seq OWNED BY public.payments.paymentid;
-
-
---
--- TOC entry 227 (class 1259 OID 16657)
--- Name: products; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.products (
+-- products
+CREATE TABLE IF NOT EXISTS public.products (
     productid integer NOT NULL,
     sku character varying(50) NOT NULL,
     productname character varying(200) NOT NULL,
@@ -386,40 +248,10 @@ CREATE TABLE public.products (
     isactive boolean DEFAULT true NOT NULL
 );
 
+ALTER TABLE public.products OWNER TO CURRENT_USER;
 
-ALTER TABLE public.products OWNER TO postgres;
-
---
--- TOC entry 226 (class 1259 OID 16656)
--- Name: products_productid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public.products_productid_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER SEQUENCE public.products_productid_seq OWNER TO postgres;
-
---
--- TOC entry 5223 (class 0 OID 0)
--- Dependencies: 226
--- Name: products_productid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public.products_productid_seq OWNED BY public.products.productid;
-
-
---
--- TOC entry 239 (class 1259 OID 16768)
--- Name: roles; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.roles (
+-- roles
+CREATE TABLE IF NOT EXISTS public.roles (
     roleid integer NOT NULL,
     rolename character varying(50) NOT NULL,
     description character varying(255),
@@ -428,40 +260,10 @@ CREATE TABLE public.roles (
     updatedat timestamp without time zone
 );
 
+ALTER TABLE public.roles OWNER TO CURRENT_USER;
 
-ALTER TABLE public.roles OWNER TO postgres;
-
---
--- TOC entry 238 (class 1259 OID 16767)
--- Name: roles_roleid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public.roles_roleid_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER SEQUENCE public.roles_roleid_seq OWNER TO postgres;
-
---
--- TOC entry 5224 (class 0 OID 0)
--- Dependencies: 238
--- Name: roles_roleid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public.roles_roleid_seq OWNED BY public.roles.roleid;
-
-
---
--- TOC entry 243 (class 1259 OID 16806)
--- Name: userloginhistory; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.userloginhistory (
+-- userloginhistory
+CREATE TABLE IF NOT EXISTS public.userloginhistory (
     loginid bigint NOT NULL,
     userid integer NOT NULL,
     logintime timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -471,39 +273,10 @@ CREATE TABLE public.userloginhistory (
     status character varying(20) DEFAULT 'Success'::character varying NOT NULL
 );
 
+ALTER TABLE public.userloginhistory OWNER TO CURRENT_USER;
 
-ALTER TABLE public.userloginhistory OWNER TO postgres;
-
---
--- TOC entry 242 (class 1259 OID 16805)
--- Name: userloginhistory_loginid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public.userloginhistory_loginid_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER SEQUENCE public.userloginhistory_loginid_seq OWNER TO postgres;
-
---
--- TOC entry 5225 (class 0 OID 0)
--- Dependencies: 242
--- Name: userloginhistory_loginid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public.userloginhistory_loginid_seq OWNED BY public.userloginhistory.loginid;
-
-
---
--- TOC entry 245 (class 1259 OID 16819)
--- Name: userpermissions; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.userpermissions (
+-- userpermissions
+CREATE TABLE IF NOT EXISTS public.userpermissions (
     permissionid integer NOT NULL,
     userid integer NOT NULL,
     modulename character varying(100) NOT NULL,
@@ -511,40 +284,10 @@ CREATE TABLE public.userpermissions (
     createdat timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 );
 
+ALTER TABLE public.userpermissions OWNER TO CURRENT_USER;
 
-ALTER TABLE public.userpermissions OWNER TO postgres;
-
---
--- TOC entry 244 (class 1259 OID 16818)
--- Name: userpermissions_permissionid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public.userpermissions_permissionid_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER SEQUENCE public.userpermissions_permissionid_seq OWNER TO postgres;
-
---
--- TOC entry 5226 (class 0 OID 0)
--- Dependencies: 244
--- Name: userpermissions_permissionid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public.userpermissions_permissionid_seq OWNED BY public.userpermissions.permissionid;
-
-
---
--- TOC entry 247 (class 1259 OID 16831)
--- Name: userprofiles; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.userprofiles (
+-- userprofiles
+CREATE TABLE IF NOT EXISTS public.userprofiles (
     profileid integer NOT NULL,
     userid integer NOT NULL,
     address character varying(255),
@@ -557,40 +300,10 @@ CREATE TABLE public.userprofiles (
     updatedat timestamp without time zone
 );
 
+ALTER TABLE public.userprofiles OWNER TO CURRENT_USER;
 
-ALTER TABLE public.userprofiles OWNER TO postgres;
-
---
--- TOC entry 246 (class 1259 OID 16830)
--- Name: userprofiles_profileid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public.userprofiles_profileid_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER SEQUENCE public.userprofiles_profileid_seq OWNER TO postgres;
-
---
--- TOC entry 5227 (class 0 OID 0)
--- Dependencies: 246
--- Name: userprofiles_profileid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public.userprofiles_profileid_seq OWNED BY public.userprofiles.profileid;
-
-
---
--- TOC entry 241 (class 1259 OID 16783)
--- Name: users; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.users (
+-- users
+CREATE TABLE IF NOT EXISTS public.users (
     userid integer NOT NULL,
     username character varying(100) NOT NULL,
     fullname character varying(150) NOT NULL,
@@ -604,201 +317,54 @@ CREATE TABLE public.users (
     updatedat timestamp without time zone
 );
 
+ALTER TABLE public.users OWNER TO CURRENT_USER;
 
-ALTER TABLE public.users OWNER TO postgres;
-
---
--- TOC entry 240 (class 1259 OID 16782)
--- Name: users_userid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public.users_userid_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER SEQUENCE public.users_userid_seq OWNER TO postgres;
-
---
--- TOC entry 5228 (class 0 OID 0)
--- Dependencies: 240
--- Name: users_userid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public.users_userid_seq OWNED BY public.users.userid;
-
-
---
--- TOC entry 229 (class 1259 OID 16674)
--- Name: warehouse; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.warehouse (
+-- warehouse
+CREATE TABLE IF NOT EXISTS public.warehouse (
     warehouseid integer NOT NULL,
     warehousename character varying(200) NOT NULL,
     location character varying(200)
 );
 
+ALTER TABLE public.warehouse OWNER TO CURRENT_USER;
 
-ALTER TABLE public.warehouse OWNER TO postgres;
+-- 4) Attach sequences as owned by columns (so DROP/OWN works properly)
+ALTER SEQUENCE IF EXISTS public.auditlogs_auditid_seq OWNED BY public.auditlogs.auditid;
+ALTER SEQUENCE IF EXISTS public.categories_categoryid_seq OWNED BY public.categories.categoryid;
+ALTER SEQUENCE IF EXISTS public.customers_customerid_seq OWNED BY public.customers.customerid;
+ALTER SEQUENCE IF EXISTS public.inventory_inventoryid_seq OWNED BY public.inventory.inventoryid;
+ALTER SEQUENCE IF EXISTS public.orderdetails_oderdetailid_seq OWNED BY public.orderdetails.oderdetailid;
+ALTER SEQUENCE IF EXISTS public.orders_orderid_seq OWNED BY public.orders.orderid;
+ALTER SEQUENCE IF EXISTS public.payments_paymentid_seq OWNED BY public.payments.paymentid;
+ALTER SEQUENCE IF EXISTS public.products_productid_seq OWNED BY public.products.productid;
+ALTER SEQUENCE IF EXISTS public.roles_roleid_seq OWNED BY public.roles.roleid;
+ALTER SEQUENCE IF EXISTS public.userloginhistory_loginid_seq OWNED BY public.userloginhistory.loginid;
+ALTER SEQUENCE IF EXISTS public.userpermissions_permissionid_seq OWNED BY public.userpermissions.permissionid;
+ALTER SEQUENCE IF EXISTS public.userprofiles_profileid_seq OWNED BY public.userprofiles.profileid;
+ALTER SEQUENCE IF EXISTS public.users_userid_seq OWNED BY public.users.userid;
+ALTER SEQUENCE IF EXISTS public.warehouse_warehouseid_seq OWNED BY public.warehouse.warehouseid;
 
---
--- TOC entry 228 (class 1259 OID 16673)
--- Name: warehouse_warehouseid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public.warehouse_warehouseid_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER SEQUENCE public.warehouse_warehouseid_seq OWNER TO postgres;
-
---
--- TOC entry 5229 (class 0 OID 0)
--- Dependencies: 228
--- Name: warehouse_warehouseid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public.warehouse_warehouseid_seq OWNED BY public.warehouse.warehouseid;
-
-
---
--- TOC entry 4932 (class 2604 OID 16621)
--- Name: auditlogs auditid; Type: DEFAULT; Schema: public; Owner: postgres
---
-
+-- 5) Set default values to use sequences (only if column has no default yet)
 ALTER TABLE ONLY public.auditlogs ALTER COLUMN auditid SET DEFAULT nextval('public.auditlogs_auditid_seq'::regclass);
-
-
---
--- TOC entry 4934 (class 2604 OID 16634)
--- Name: categories categoryid; Type: DEFAULT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.categories ALTER COLUMN categoryid SET DEFAULT nextval('public.categories_categoryid_seq'::regclass);
-
-
---
--- TOC entry 4935 (class 2604 OID 16643)
--- Name: customers customerid; Type: DEFAULT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.customers ALTER COLUMN customerid SET DEFAULT nextval('public.customers_customerid_seq'::regclass);
-
-
---
--- TOC entry 4941 (class 2604 OID 16686)
--- Name: inventory inventoryid; Type: DEFAULT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.inventory ALTER COLUMN inventoryid SET DEFAULT nextval('public.inventory_inventoryid_seq'::regclass);
-
-
---
--- TOC entry 4957 (class 2604 OID 16743)
--- Name: orderdetails oderdetailid; Type: DEFAULT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.orderdetails ALTER COLUMN oderdetailid SET DEFAULT nextval('public.orderdetails_oderdetailid_seq'::regclass);
-
-
---
--- TOC entry 4951 (class 2604 OID 16716)
--- Name: orders orderid; Type: DEFAULT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.orders ALTER COLUMN orderid SET DEFAULT nextval('public.orders_orderid_seq'::regclass);
-
-
---
--- TOC entry 4959 (class 2604 OID 16758)
--- Name: payments paymentid; Type: DEFAULT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.payments ALTER COLUMN paymentid SET DEFAULT nextval('public.payments_paymentid_seq'::regclass);
-
-
---
--- TOC entry 4937 (class 2604 OID 16660)
--- Name: products productid; Type: DEFAULT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.products ALTER COLUMN productid SET DEFAULT nextval('public.products_productid_seq'::regclass);
-
-
---
--- TOC entry 4960 (class 2604 OID 16771)
--- Name: roles roleid; Type: DEFAULT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.roles ALTER COLUMN roleid SET DEFAULT nextval('public.roles_roleid_seq'::regclass);
-
-
---
--- TOC entry 4966 (class 2604 OID 16809)
--- Name: userloginhistory loginid; Type: DEFAULT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.userloginhistory ALTER COLUMN loginid SET DEFAULT nextval('public.userloginhistory_loginid_seq'::regclass);
-
-
---
--- TOC entry 4969 (class 2604 OID 16822)
--- Name: userpermissions permissionid; Type: DEFAULT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.userpermissions ALTER COLUMN permissionid SET DEFAULT nextval('public.userpermissions_permissionid_seq'::regclass);
-
-
---
--- TOC entry 4971 (class 2604 OID 16834)
--- Name: userprofiles profileid; Type: DEFAULT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.userprofiles ALTER COLUMN profileid SET DEFAULT nextval('public.userprofiles_profileid_seq'::regclass);
-
-
---
--- TOC entry 4963 (class 2604 OID 16786)
--- Name: users userid; Type: DEFAULT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.users ALTER COLUMN userid SET DEFAULT nextval('public.users_userid_seq'::regclass);
-
-
---
--- TOC entry 4940 (class 2604 OID 16677)
--- Name: warehouse warehouseid; Type: DEFAULT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.warehouse ALTER COLUMN warehouseid SET DEFAULT nextval('public.warehouse_warehouseid_seq'::regclass);
 
+-- End of Part 1
+-- PART 2: COPY DATA INTO TABLES
+-- Cleaned COPY statements (fully compatible)
 
---
--- TOC entry 5183 (class 0 OID 16618)
--- Dependencies: 221
--- Data for Name: auditlogs; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.auditlogs (auditid, userid, actiontype, tablename, recordid, actiontime, details) FROM stdin;
-\.
-
-
---
--- TOC entry 5185 (class 0 OID 16631)
--- Dependencies: 223
--- Data for Name: categories; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
+-- categories
 COPY public.categories (categoryid, categoryname) FROM stdin;
 65	Computer
 66	Laptop
@@ -806,13 +372,7 @@ COPY public.categories (categoryid, categoryname) FROM stdin;
 71	Samsung
 \.
 
-
---
--- TOC entry 5187 (class 0 OID 16640)
--- Dependencies: 225
--- Data for Name: customers; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
+-- customers
 COPY public.customers (customerid, customercode, fullname, contactphone, email, region, createddate, alternatephone, address, city, postalcode, customertype, nid, taxnumber, contactperson, notes, isactive, createdby, updatedby, updateddate) FROM stdin;
 100003	CUST-000001	Alamgir Kabir	01712706040	alamgirkabir.wave@gmail.com	Dhaka	2025-11-19 15:29:05.839915	01841338354	Flat # A5, Block-R, House # 48, Block : R/S, Nurjahan Road, Mohammadpur, Dhaka	Dhaka	1207	Retail	123456789101		Test for Delete	He is the Regula customer	t	Admin	Admin	2025-11-19 16:10:21.005352
 100005	CUST-000002	Hasan Mahmud	01711000002	hasan@example.com	Dhaka	2025-11-19 16:14:17.216667	01841000002	Mirpur DOHS, Dhaka	Dhaka	1216	Retail	987654321012	\N	Mr. Jui	New customer	t	Admin	\N	\N
@@ -827,65 +387,14 @@ COPY public.customers (customerid, customercode, fullname, contactphone, email, 
 100016	CUST-100015	Alamgir Kabir	01712706041			2025-11-20 07:48:35.469217			খুলনা		Retail	12345678	123456	Fahim Khan	এনআইডি ও ট্যাক্স ভ্যালিডেশন দিতে হবে	t	Admin	\N	2025-11-20 07:50:49.675525
 \.
 
-
---
--- TOC entry 5193 (class 0 OID 16683)
--- Dependencies: 231
--- Data for Name: inventory; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
+-- inventory
 COPY public.inventory (inventoryid, productid, warehouseid, stockqty, lastupdate, purchaseprice, salesprice, avgcost, reorderlevel, safetystock, maxstock, batchno, expirydate, unitofmeasureid, currencycode, valuationmethod, createdat, createdby, updatedat, updatedby, isactive) FROM stdin;
 50013	8	1	2	2025-11-19 11:21:57.186094	50000.0000	0.0000	\N	0	0	\N	\N	\N	\N	USD	AVG	2025-11-19 11:01:53.286535	\N	\N	\N	t
 50015	7	1	2	2025-11-20 19:42:19.520481	0.0000	0.0000	\N	0	0	\N	\N	\N	\N	USD	AVG	2025-11-21 01:37:21.383933	\N	\N	\N	t
 50014	11	2	2	2025-11-20 19:42:23.484822	50000.0000	0.0000	\N	0	0	\N	\N	\N	\N	USD	AVG	2025-11-19 11:22:42.560897	\N	\N	\N	t
 \.
 
-
---
--- TOC entry 5197 (class 0 OID 16740)
--- Dependencies: 235
--- Data for Name: orderdetails; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.orderdetails (oderdetailid, orderid, productid, quantity, unitprice) FROM stdin;
-1	200031	8	1	28000.00
-2	200031	11	3	17000.00
-4	200032	7	1	72000.00
-5	200032	11	1	15000.00
-6	200032	14	2	19999.00
-7	200031	13	3	99000.00
-\.
-
-
---
--- TOC entry 5195 (class 0 OID 16713)
--- Dependencies: 233
--- Data for Name: orders; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.orders (orderid, ordernumber, customerid, orderdate, status, subtotal, discount, tax, totalamount) FROM stdin;
-200032	20251120-0001	100005	2025-11-19 00:00:00	Pending	15000.00	0.00	0.00	15000.00
-200031	001	100016	2025-11-20 00:00:00	Pending	10000.00	10.00	1.00	9991.00
-\.
-
-
---
--- TOC entry 5199 (class 0 OID 16755)
--- Dependencies: 237
--- Data for Name: payments; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.payments (paymentid, orderid, paymentdate, amount, paymentmethod, transactionref) FROM stdin;
-2	200032	2025-11-21 00:00:00	3000.00	Card	2
-\.
-
-
---
--- TOC entry 5189 (class 0 OID 16657)
--- Dependencies: 227
--- Data for Name: products; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
+-- products
 COPY public.products (productid, sku, productname, categoryid, unitprice, isactive) FROM stdin;
 10	LAP-6601	Samsung Smart TV 43 Inch	66	55000.00	t
 11	SAM-7101	6.5 Inch Android 20 Phone	71	15000.00	t
@@ -898,13 +407,30 @@ COPY public.products (productid, sku, productname, categoryid, unitprice, isacti
 7	LAP-6604	Dell Inspiron Laptop 13th Gen	66	72000.00	f
 \.
 
+-- orders
+COPY public.orders (orderid, ordernumber, customerid, orderdate, status, subtotal, discount, tax, totalamount) FROM stdin;
+200032	20251120-0001	100005	2025-11-19 00:00:00	Pending	15000.00	0.00	0.00	15000.00
+200031	001	100016	2025-11-20 00:00:00	Pending	10000.00	10.00	1.00	9991.00
+\.
 
---
--- TOC entry 5201 (class 0 OID 16768)
--- Dependencies: 239
--- Data for Name: roles; Type: TABLE DATA; Schema: public; Owner: postgres
---
+-- orderdetails
+COPY public.orderdetails (oderdetailid, orderid, productid, quantity, unitprice) FROM stdin;
+1	200031	8	1	28000.00
+2	200031	11	3	17000.00
+4	200032	7	1	72000.00
+5	200032	11	1	15000.00
+6	200032	14	2	19999.00
+7	200031	13	3	99000.00
+\.
 
+-- payments
+COPY public.payments (paymentid, orderid, paymentdate, amount, paymentmethod, transactionref) FROM stdin;
+2	200032	2025-11-21 00:00:00	3000.00	Card	2
+\.
+
+-- PART 3: Remaining COPY DATA (roles, users, permissions, warehouse etc.)
+
+-- roles
 COPY public.roles (roleid, rolename, description, issystemrole, createdat, updatedat) FROM stdin;
 1	Administrator	Full access	t	2025-11-13 17:25:57.673333	2025-11-13 20:45:34.986667
 2	Manager	Can oversee operations and manage user activities.	f	2025-11-13 17:25:57.673333	\N
@@ -916,13 +442,15 @@ COPY public.roles (roleid, rolename, description, issystemrole, createdat, updat
 9	CDO	sdfsd fdsfs	f	2025-11-20 17:34:56.88174	2025-11-20 17:39:04.419635
 \.
 
+-- users
+COPY public.users (userid, username, fullname, email, phonenumber, passwordhash, roleid, isactive, lastlogin, createdat, updatedat) FROM stdin;
+1	Alamgir	Alamgir Kabir	alamgirfrombd@gmail.com	01712706040	hashed_password_here	7	t	\N	2025-11-15 19:51:59.07	2025-11-15 21:41:18.606979
+4	Beauty	Hafiza Khatun	hafiza@gmail.com	01931670959	$2b$12$tUfZ77p2tI7uARoatpCylenZq4xo3hOCL/3aXMeS77E7MNsNjIhtS	7	t	\N	2025-11-15 21:35:59.050281	2025-11-15 21:35:59.050281
+5	Rifat	Rifat Muzakkir	rifat@gmail.com	01841338354	$2b$12$O1vBDVBjaXX9Qo3aaI30MeTNYvyvi54eT62wzq7s1HRZm0z5jXnu6	3	t	\N	2025-11-15 21:42:10.669953	2025-11-16 09:10:16.972464
+3	abony	Promity Abony	abon@gmail.com	01711706040	Alamgir@123	1	t	\N	2025-11-15 20:45:39.718651	2025-11-20 17:51:21.842912
+\.
 
---
--- TOC entry 5205 (class 0 OID 16806)
--- Dependencies: 243
--- Data for Name: userloginhistory; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
+-- userloginhistory
 COPY public.userloginhistory (loginid, userid, logintime, logouttime, ipaddress, deviceinfo, status) FROM stdin;
 1	1	2025-11-18 10:30:07.186667	2025-11-18 10:32:16.363333	192.168.0.207	Windows 10	Success
 2	1	2025-11-18 10:32:20.686667	\N	192.168.0.207	Windows 10	Success
@@ -941,13 +469,7 @@ COPY public.userloginhistory (loginid, userid, logintime, logouttime, ipaddress,
 15	1	2025-11-18 10:52:21.896667	\N	192.168.0.207	Windows 10	Success
 \.
 
-
---
--- TOC entry 5207 (class 0 OID 16819)
--- Dependencies: 245
--- Data for Name: userpermissions; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
+-- userpermissions
 COPY public.userpermissions (permissionid, userid, modulename, permissionvalue, createdat) FROM stdin;
 1	1	Users	15	2025-11-16 17:06:17.240023
 2	1	Auth	15	2025-11-16 17:11:32.67006
@@ -969,39 +491,13 @@ COPY public.userpermissions (permissionid, userid, modulename, permissionvalue, 
 18	3	PaymentManagement	15	2025-11-16 17:17:57.48508
 \.
 
-
---
--- TOC entry 5209 (class 0 OID 16831)
--- Dependencies: 247
--- Data for Name: userprofiles; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
+-- userprofiles
 COPY public.userprofiles (profileid, userid, address, city, country, dateofbirth, gender, profilepictureurl, createdat, updatedat) FROM stdin;
 5	1	House #12, Road #5, Dhanmondi	Dhaka	Bangladesh	1990-05-12	Male	https://example.com/profiles/alamgir.jpg	2025-11-16 09:44:53.756667	\N
 8	1	Flat # A5, Block-R, House # 48, Block : R/S, Nurjahan Road, Mohammadpur, Dhaka	Dhaka	Bangladesh	1979-11-06	Male	uploads/profile_pics\\user_1.JPG	2025-11-16 13:03:44.30145	2025-11-20 20:45:54.412014
 \.
 
-
---
--- TOC entry 5203 (class 0 OID 16783)
--- Dependencies: 241
--- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.users (userid, username, fullname, email, phonenumber, passwordhash, roleid, isactive, lastlogin, createdat, updatedat) FROM stdin;
-1	Alamgir	Alamgir Kabir	alamgirfrombd@gmail.com	01712706040	hashed_password_here	7	t	\N	2025-11-15 19:51:59.07	2025-11-15 21:41:18.606979
-4	Beauty	Hafiza Khatun	hafiza@gmail.com	01931670959	$2b$12$tUfZ77p2tI7uARoatpCylenZq4xo3hOCL/3aXMeS77E7MNsNjIhtS	7	t	\N	2025-11-15 21:35:59.050281	2025-11-15 21:35:59.050281
-5	Rifat	Rifat Muzakkir	rifat@gmail.com	01841338354	$2b$12$O1vBDVBjaXX9Qo3aaI30MeTNYvyvi54eT62wzq7s1HRZm0z5jXnu6	3	t	\N	2025-11-15 21:42:10.669953	2025-11-16 09:10:16.972464
-3	abony	Promity Abony	abon@gmail.com	01711706040	Alamgir@123	1	t	\N	2025-11-15 20:45:39.718651	2025-11-20 17:51:21.842912
-\.
-
-
---
--- TOC entry 5191 (class 0 OID 16674)
--- Dependencies: 229
--- Data for Name: warehouse; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
+-- warehouse
 COPY public.warehouse (warehouseid, warehousename, location) FROM stdin;
 1	Central Warehouse	Dhaka
 2	North Hub	Chittagong
@@ -1042,7 +538,7 @@ COPY public.warehouse (warehouseid, warehousename, location) FROM stdin;
 39	Warehouse Epsilon	Rajshahi
 40	Regional Hub 1	Dhaka
 41	Regional Hub 2	Chittagong
-42	Regional Hub 3	Khulna
+42	Regional Hub 3	Khulনা
 43	Regional Hub 4	Sylhet
 44	Regional Hub 5	Rajshahi
 45	City Hub A	Dhaka
@@ -1054,434 +550,119 @@ COPY public.warehouse (warehouseid, warehousename, location) FROM stdin;
 \.
 
 
---
--- TOC entry 5230 (class 0 OID 0)
--- Dependencies: 220
--- Name: auditlogs_auditid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
+-- PART 4: CONSTRAINTS AND FOREIGN KEYS
+-- (Final section of the migration)
 
-SELECT pg_catalog.setval('public.auditlogs_auditid_seq', 1, false);
-
-
---
--- TOC entry 5231 (class 0 OID 0)
--- Dependencies: 222
--- Name: categories_categoryid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.categories_categoryid_seq', 71, true);
-
-
---
--- TOC entry 5232 (class 0 OID 0)
--- Dependencies: 224
--- Name: customers_customerid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.customers_customerid_seq', 100016, true);
-
-
---
--- TOC entry 5233 (class 0 OID 0)
--- Dependencies: 230
--- Name: inventory_inventoryid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.inventory_inventoryid_seq', 50015, true);
-
-
---
--- TOC entry 5234 (class 0 OID 0)
--- Dependencies: 234
--- Name: orderdetails_oderdetailid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.orderdetails_oderdetailid_seq', 7, true);
-
-
---
--- TOC entry 5235 (class 0 OID 0)
--- Dependencies: 232
--- Name: orders_orderid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.orders_orderid_seq', 200032, true);
-
-
---
--- TOC entry 5236 (class 0 OID 0)
--- Dependencies: 236
--- Name: payments_paymentid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.payments_paymentid_seq', 2, true);
-
-
---
--- TOC entry 5237 (class 0 OID 0)
--- Dependencies: 226
--- Name: products_productid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.products_productid_seq', 16, true);
-
-
---
--- TOC entry 5238 (class 0 OID 0)
--- Dependencies: 238
--- Name: roles_roleid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.roles_roleid_seq', 10, true);
-
-
---
--- TOC entry 5239 (class 0 OID 0)
--- Dependencies: 242
--- Name: userloginhistory_loginid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.userloginhistory_loginid_seq', 15, true);
-
-
---
--- TOC entry 5240 (class 0 OID 0)
--- Dependencies: 244
--- Name: userpermissions_permissionid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.userpermissions_permissionid_seq', 18, true);
-
-
---
--- TOC entry 5241 (class 0 OID 0)
--- Dependencies: 246
--- Name: userprofiles_profileid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.userprofiles_profileid_seq', 8, true);
-
-
---
--- TOC entry 5242 (class 0 OID 0)
--- Dependencies: 240
--- Name: users_userid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.users_userid_seq', 5, true);
-
-
---
--- TOC entry 5243 (class 0 OID 0)
--- Dependencies: 228
--- Name: warehouse_warehouseid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.warehouse_warehouseid_seq', 50, true);
-
-
---
--- TOC entry 4982 (class 2606 OID 16629)
--- Name: auditlogs auditlogs_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
+-- PRIMARY KEYS
 ALTER TABLE ONLY public.auditlogs
     ADD CONSTRAINT auditlogs_pkey PRIMARY KEY (auditid);
-
-
---
--- TOC entry 4984 (class 2606 OID 16638)
--- Name: categories categories_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.categories
     ADD CONSTRAINT categories_pkey PRIMARY KEY (categoryid);
 
-
---
--- TOC entry 4986 (class 2606 OID 16655)
--- Name: customers customers_customercode_key; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.customers
-    ADD CONSTRAINT customers_customercode_key UNIQUE (customercode);
-
-
---
--- TOC entry 4988 (class 2606 OID 16653)
--- Name: customers customers_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.customers
     ADD CONSTRAINT customers_pkey PRIMARY KEY (customerid);
-
-
---
--- TOC entry 4996 (class 2606 OID 16709)
--- Name: inventory inventory_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.inventory
     ADD CONSTRAINT inventory_pkey PRIMARY KEY (inventoryid);
 
-
---
--- TOC entry 4998 (class 2606 OID 16711)
--- Name: inventory inventory_productid_warehouseid_key; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.inventory
-    ADD CONSTRAINT inventory_productid_warehouseid_key UNIQUE (productid, warehouseid);
-
-
---
--- TOC entry 5004 (class 2606 OID 16753)
--- Name: orderdetails orderdetails_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.orderdetails
     ADD CONSTRAINT orderdetails_pkey PRIMARY KEY (oderdetailid);
-
-
---
--- TOC entry 5000 (class 2606 OID 16738)
--- Name: orders orders_ordernumber_key; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.orders
-    ADD CONSTRAINT orders_ordernumber_key UNIQUE (ordernumber);
-
-
---
--- TOC entry 5002 (class 2606 OID 16736)
--- Name: orders orders_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.orders
     ADD CONSTRAINT orders_pkey PRIMARY KEY (orderid);
 
-
---
--- TOC entry 5006 (class 2606 OID 16766)
--- Name: payments payments_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.payments
     ADD CONSTRAINT payments_pkey PRIMARY KEY (paymentid);
-
-
---
--- TOC entry 4990 (class 2606 OID 16670)
--- Name: products products_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.products
     ADD CONSTRAINT products_pkey PRIMARY KEY (productid);
 
-
---
--- TOC entry 4992 (class 2606 OID 16672)
--- Name: products products_sku_key; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.products
-    ADD CONSTRAINT products_sku_key UNIQUE (sku);
-
-
---
--- TOC entry 5008 (class 2606 OID 16779)
--- Name: roles roles_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.roles
     ADD CONSTRAINT roles_pkey PRIMARY KEY (roleid);
-
-
---
--- TOC entry 5010 (class 2606 OID 16781)
--- Name: roles roles_rolename_key; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.roles
-    ADD CONSTRAINT roles_rolename_key UNIQUE (rolename);
-
-
---
--- TOC entry 5018 (class 2606 OID 16817)
--- Name: userloginhistory userloginhistory_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.userloginhistory
     ADD CONSTRAINT userloginhistory_pkey PRIMARY KEY (loginid);
 
-
---
--- TOC entry 5020 (class 2606 OID 16829)
--- Name: userpermissions userpermissions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.userpermissions
     ADD CONSTRAINT userpermissions_pkey PRIMARY KEY (permissionid);
-
-
---
--- TOC entry 5022 (class 2606 OID 16842)
--- Name: userprofiles userprofiles_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.userprofiles
     ADD CONSTRAINT userprofiles_pkey PRIMARY KEY (profileid);
 
-
---
--- TOC entry 5012 (class 2606 OID 16804)
--- Name: users users_email_key; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.users
-    ADD CONSTRAINT users_email_key UNIQUE (email);
-
-
---
--- TOC entry 5014 (class 2606 OID 16800)
--- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.users
     ADD CONSTRAINT users_pkey PRIMARY KEY (userid);
-
-
---
--- TOC entry 5016 (class 2606 OID 16802)
--- Name: users users_username_key; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.users
-    ADD CONSTRAINT users_username_key UNIQUE (username);
-
-
---
--- TOC entry 4994 (class 2606 OID 16681)
--- Name: warehouse warehouse_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.warehouse
     ADD CONSTRAINT warehouse_pkey PRIMARY KEY (warehouseid);
 
-
---
--- TOC entry 5023 (class 2606 OID 16843)
--- Name: auditlogs fk_auditlogs_userid; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.auditlogs
-    ADD CONSTRAINT fk_auditlogs_userid FOREIGN KEY (userid) REFERENCES public.users(userid);
-
-
---
--- TOC entry 5025 (class 2606 OID 16848)
--- Name: inventory fk_inventory_productsid; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.inventory
-    ADD CONSTRAINT fk_inventory_productsid FOREIGN KEY (productid) REFERENCES public.products(productid);
-
-
---
--- TOC entry 5026 (class 2606 OID 16853)
--- Name: inventory fk_inventory_warehouseid; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.inventory
-    ADD CONSTRAINT fk_inventory_warehouseid FOREIGN KEY (warehouseid) REFERENCES public.warehouse(warehouseid);
-
-
---
--- TOC entry 5028 (class 2606 OID 16858)
--- Name: orderdetails fk_orderdetails_orderid; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.orderdetails
-    ADD CONSTRAINT fk_orderdetails_orderid FOREIGN KEY (orderid) REFERENCES public.orders(orderid) ON DELETE CASCADE;
-
-
---
--- TOC entry 5029 (class 2606 OID 16863)
--- Name: orderdetails fk_orderdetails_productid; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.orderdetails
-    ADD CONSTRAINT fk_orderdetails_productid FOREIGN KEY (productid) REFERENCES public.products(productid);
-
-
---
--- TOC entry 5027 (class 2606 OID 16868)
--- Name: orders fk_orders_customerid; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.orders
-    ADD CONSTRAINT fk_orders_customerid FOREIGN KEY (customerid) REFERENCES public.customers(customerid);
-
-
---
--- TOC entry 5030 (class 2606 OID 16873)
--- Name: payments fk_payments_orders; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.payments
-    ADD CONSTRAINT fk_payments_orders FOREIGN KEY (orderid) REFERENCES public.orders(orderid);
-
-
---
--- TOC entry 5024 (class 2606 OID 16878)
--- Name: products fk_products_category; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
+-- UNIQUE CONSTRAINTS
+ALTER TABLE ONLY public.customers
+    ADD CONSTRAINT customers_customercode_key UNIQUE (customercode);
 
 ALTER TABLE ONLY public.products
-    ADD CONSTRAINT fk_products_category FOREIGN KEY (categoryid) REFERENCES public.categories(categoryid);
+    ADD CONSTRAINT products_sku_key UNIQUE (sku);
 
+ALTER TABLE ONLY public.orders
+    ADD CONSTRAINT orders_ordernumber_key UNIQUE (ordernumber);
 
---
--- TOC entry 5032 (class 2606 OID 16883)
--- Name: userloginhistory fk_userloginhistory_userid; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.userloginhistory
-    ADD CONSTRAINT fk_userloginhistory_userid FOREIGN KEY (userid) REFERENCES public.users(userid);
-
-
---
--- TOC entry 5033 (class 2606 OID 16888)
--- Name: userpermissions fk_userpermissions_userid; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.userpermissions
-    ADD CONSTRAINT fk_userpermissions_userid FOREIGN KEY (userid) REFERENCES public.users(userid);
-
-
---
--- TOC entry 5034 (class 2606 OID 16893)
--- Name: userprofiles fk_userprofiles_userid; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.userprofiles
-    ADD CONSTRAINT fk_userprofiles_userid FOREIGN KEY (userid) REFERENCES public.users(userid);
-
-
---
--- TOC entry 5031 (class 2606 OID 16898)
--- Name: users fk_users_roleid; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
+ALTER TABLE ONLY public.roles
+    ADD CONSTRAINT roles_rolename_key UNIQUE (rolename);
 
 ALTER TABLE ONLY public.users
-    ADD CONSTRAINT fk_users_roleid FOREIGN KEY (roleid) REFERENCES public.roles(roleid);
+    ADD CONSTRAINT users_email_key UNIQUE (email);
 
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_username_key UNIQUE (username);
 
--- Completed on 2025-11-21 15:51:20
+ALTER TABLE ONLY public.inventory
+    ADD CONSTRAINT inventory_productid_warehouseid_key UNIQUE (productid, warehouseid);
 
---
--- PostgreSQL database dump complete
---
+-- FOREIGN KEYS
+ALTER TABLE ONLY public.auditlogs
+    ADD CONSTRAINT fk_auditlogs_userid
+    FOREIGN KEY (userid) REFERENCES public.users(userid);
 
-\unrestrict NS7BC8Y3VgaundyEfn3Qd8X3tqYlLAfZJ5rJeTv1dSJkjfmG3sRTdBpSvEmBIIj
+ALTER TABLE ONLY public.inventory
+    ADD CONSTRAINT fk_inventory_productsid
+    FOREIGN KEY (productid) REFERENCES public.products(productid);
 
+ALTER TABLE ONLY public.inventory
+    ADD CONSTRAINT fk_inventory_warehouseid
+    FOREIGN KEY (warehouseid) REFERENCES public.warehouse(warehouseid);
+
+ALTER TABLE ONLY public.orderdetails
+    ADD CONSTRAINT fk_orderdetails_orderid
+    FOREIGN KEY (orderid) REFERENCES public.orders(orderid) ON DELETE CASCADE;
+
+ALTER TABLE ONLY public.orderdetails
+    ADD CONSTRAINT fk_orderdetails_productid
+    FOREIGN KEY (productid) REFERENCES public.products(productid);
+
+ALTER TABLE ONLY public.orders
+    ADD CONSTRAINT fk_orders_customerid
+    FOREIGN KEY (customerid) REFERENCES public.customers(customerid);
+
+ALTER TABLE ONLY public.payments
+    ADD CONSTRAINT fk_payments_orders
+    FOREIGN KEY (orderid) REFERENCES public.orders(orderid);
+
+ALTER TABLE ONLY public.products
+    ADD CONSTRAINT fk_products_category
+    FOREIGN KEY (categoryid) REFERENCES public.categories(categoryid);
+
+ALTER TABLE ONLY public.userloginhistory
+    ADD CONSTRAINT fk_userloginhistory_userid
+    FOREIGN KEY (userid) REFERENCES public.users(userid);
+
+ALTER TABLE ONLY public.userpermissions
+    ADD CONSTRAINT fk_userpermissions_userid
+    FOREIGN KEY (userid) REFERENCES public.users(userid);
+
+ALTER TABLE ONLY public.userprofiles
+    ADD CONSTRAINT fk_userprofiles_userid
+    FOREIGN KEY (userid) REFERENCES public.users(userid);
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT fk_users_roleid
+    FOREIGN KEY (roleid) REFERENCES public.roles(roleid);
