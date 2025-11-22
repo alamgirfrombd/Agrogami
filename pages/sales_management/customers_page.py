@@ -131,7 +131,7 @@ def delete_customer(cid: int) -> Tuple[bool, str]:
 # =========================================================================================
 # CUSTOMER DETAILS POPUP
 # =========================================================================================
-@st.dialog("👁 Customer Details", width="large")
+#@st.dialog("👁 Customer Details", width="large")
 def view_customer(cid: int):
     row = get_customer_by_id(cid)
     if row is None:
@@ -159,7 +159,8 @@ def view_customer(cid: int):
 # =========================================================================================
 # ADD / EDIT POPUP
 # =========================================================================================
-@st.dialog("✏️ Add / Edit Customer", width="large")
+#@st.dialog("✏️ Add / Edit Customer", width="large")
+
 def customer_form(cid: Optional[int] = None):
     row = get_customer_by_id(cid) if cid else None
     is_edit = row is not None
