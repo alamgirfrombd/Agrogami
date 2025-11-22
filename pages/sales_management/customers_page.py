@@ -8,7 +8,7 @@ from db_connect import get_connection
 # =========================================================================================
 # PAGE CONFIG
 # =========================================================================================
-st.set_page_config(page_title="Customers Management", page_icon="👥", layout="wide")
+#st.set_page_config(page_title="Customers Management", page_icon="👥", layout="wide")
 
 
 # =========================================================================================

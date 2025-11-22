@@ -10,7 +10,7 @@ from db_connect import get_connection
 # ===========================================================
 # STREAMLIT PAGE SETUP
 # ===========================================================
-st.set_page_config(page_title="User Profiles", page_icon="👥", layout="wide")
+#st.set_page_config(page_title="User Profiles", page_icon="👥", layout="wide")
 
 # ===========================================================
 # LOAD CUSTOM CSS

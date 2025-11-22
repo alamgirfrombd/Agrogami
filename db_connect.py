@@ -6,34 +6,34 @@ from pathlib import Path
 
 def get_connection():
     try:
-        # 1️⃣ FIRST: Try Render DATABASE_URL
+        # ✅ 1️⃣ Try Render DATABASE_URL (RECOMMENDED)
         db_url = os.getenv("DATABASE_URL")
 
-        if db_url:
+        if db_url and db_url.startswith("postgres"):
             urlparse.uses_netloc.append("postgres")
             url = urlparse.urlparse(db_url)
 
             return psycopg2.connect(
-                database=url.path[1:],
+                database=url.path.lstrip("/"),
                 user=url.username,
                 password=url.password,
                 host=url.hostname,
                 port=url.port,
-                sslmode="require"
+                sslmode="require"   # ✅ required for Render
             )
 
-        # 2️⃣ SECOND: Try Local PC .env
+        # ✅ 2️⃣ Try local dbinfo.env
         env_path = Path(__file__).resolve().parent / "dbinfo.env"
-
         if env_path.exists():
             load_dotenv(env_path, override=True)
 
-        host = os.getenv("DB_HOST")
+        host = os.getenv("DB_HOST", "localhost")
         name = os.getenv("DB_NAME")
         user = os.getenv("DB_USER")
         password = os.getenv("DB_PASSWORD")
-        port = os.getenv("DB_PORT")
+        port = os.getenv("DB_PORT", "5432")
 
+        # ✅ 3️⃣ Local connection support
         if host and name and user and password:
             return psycopg2.connect(
                 host=host,
@@ -43,8 +43,8 @@ def get_connection():
                 password=password
             )
 
-        # 3️⃣ NOTHING FOUND → raise error
-        raise Exception("❌ Local DB_HOST not found and Render DATABASE_URL missing.")
+        # ✅ 4️⃣ Nothing worked
+        raise Exception("DATABASE_URL and local DB settings missing")
 
     except Exception as e:
         print("❌ PostgreSQL connection failed:", e)
