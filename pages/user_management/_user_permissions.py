@@ -214,7 +214,12 @@ def main():
     # Search
     # -------------------------------------------------------
     st.subheader("🔎 Search")
-    search = st.text_input("Module / Username / UserID")
+    search = st.text_input(
+    "🔍 Search by Username, Address, City or Country",
+    "",
+    key="profile_search_input_user"
+)
+
 
     if search:
         merged = perm_df.merge(users_df, on="userid", how="left")

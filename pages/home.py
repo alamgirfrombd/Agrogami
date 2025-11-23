@@ -82,11 +82,17 @@ with st.sidebar:
     st.write("---")
 
     # ensure keys exist in session_state (avoid KeyError)
-    for k in [
-        "radio_user_mgmt", "radio_inventory", "radio_sales", "radio_profile"
-    ]:
-        if k not in st.session_state:
-            st.session_state[k] = None
+    for key, default_value in {
+        # Keys for the sub-page logic (based on your previous error)
+        "page_mode": "list", # e.g., "list", "view", "edit", "add"
+        "view_id": None,     # ID of the item being viewed/edited
+        # Keys used by the routing logic
+        "main_menu": None,
+        "sub_menu": None,
+        "logged_in": True,   # Assuming login.py sets this, but setting a default prevents errors
+    }.items():
+        if key not in st.session_state:
+            st.session_state[key] = default_value
 
     # USER MANAGEMENT GROUP
     with st.expander("👤 User Management", expanded=False):
