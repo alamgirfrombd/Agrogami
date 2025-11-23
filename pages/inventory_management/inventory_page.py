@@ -5,10 +5,6 @@ from typing import Optional
 from db_connect import get_connection
 
 
-# ============================================================
-# Page Config
-# ============================================================
-st.set_page_config(page_title="Inventory Stock", layout="wide")
 
 
 # ============================================================
