@@ -131,25 +131,26 @@ def delete_inventory_row(inv_id: int):
 # ============================================================
 # EDIT Pop Up DIALOG
 # ============================================================
-@st.dialog("Edit Inventory Stock", width="large")
 
 def edit_inventory_dialog(inv_id: int):
-    df = get_inventory()
-    row = df[df.InventoryID == inv_id].iloc[0]
+    with st.modal("Edit Inventory Stock"):
+        df = get_inventory()
+        row = df[df.InventoryID == inv_id].iloc[0]
 
-    with st.form("edit_form"):
-        qty = st.number_input("Stock Quantity", min_value=0, value=int(row.StockQty), step=1)
-        p_price = st.number_input("Purchase Price", min_value=0.0, value=float(row.PurchasePrice or 0))
-        s_price = st.number_input("Sales Price", min_value=0.0, value=float(row.SalesPrice or 0))
+        with st.form("edit_form"):
+            qty = st.number_input("Stock Quantity", min_value=0, value=int(row.StockQty), step=1)
+            p_price = st.number_input("Purchase Price", min_value=0.0, value=float(row.PurchasePrice or 0))
+            s_price = st.number_input("Sales Price", min_value=0.0, value=float(row.SalesPrice or 0))
 
-        c1, c2 = st.columns(2)
-        if c1.form_submit_button("Update", use_container_width=True, type="primary"):
-            update_inventory_row(inv_id, qty, p_price, s_price)
-            st.success("Updated!")
-            st.rerun()
-            
-        if c2.form_submit_button("Cancel", use_container_width=True):
-            st.rerun()
+            c1, c2 = st.columns(2)
+            if c1.form_submit_button("Update", use_container_width=True):
+                update_inventory_row(inv_id, qty, p_price, s_price)
+                st.success("Updated!")
+                st.rerun()
+
+            if c2.form_submit_button("Cancel", use_container_width=True):
+                st.rerun()
+
 
 
 # ============================================================
