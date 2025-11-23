@@ -29,10 +29,8 @@ def get_inventory(search: str = "") -> pd.DataFrame:
         WHERE P.productname ILIKE %s
         ORDER BY I.inventoryid DESC;
     """
-    try:
-        df = pd.read_sql(sql, conn, params=[f"%{search}%"])
-    finally:
-        conn.close()
+    df = pd.read_sql(sql, conn, params=[f"%{search}%"])
+    conn.close()
     return df
 
 
@@ -42,110 +40,78 @@ def upsert_inventory(product_id: int, warehouse_id: int, qty_delta: int,
     conn = get_connection()
     cur = conn.cursor()
 
-    try:
+    cur.execute("""
+        SELECT inventoryid, stockqty 
+        FROM public.inventory 
+        WHERE productid=%s AND warehouseid=%s
+    """, (product_id, warehouse_id))
+
+    row = cur.fetchone()
+    now = datetime.utcnow()
+
+    if row:
+        inv_id, old_qty = row
+        new_qty = old_qty + qty_delta
+
+        if new_qty < 0:
+            raise ValueError("Stock cannot be negative.")
+
         cur.execute("""
-            SELECT inventoryid, stockqty 
-            FROM public.inventory 
-            WHERE productid=%s AND warehouseid=%s
-        """, (product_id, warehouse_id))
+            UPDATE public.inventory 
+            SET stockqty=%s,
+                purchaseprice=COALESCE(%s, purchaseprice),
+                salesprice=COALESCE(%s, salesprice),
+                lastupdate=%s
+            WHERE inventoryid=%s
+        """, (new_qty, purchase_price, sales_price, now, inv_id))
 
-        row = cur.fetchone()
-        now = datetime.utcnow()
+    else:
+        if qty_delta < 0:
+            raise ValueError("Cannot reduce non-existing stock.")
 
-        if row:
-            inv_id, old_qty = row
-            new_qty = old_qty + qty_delta
+        cur.execute("""
+            INSERT INTO public.inventory 
+            (productid, warehouseid, stockqty, purchaseprice, salesprice, lastupdate)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """, (product_id, warehouse_id, qty_delta,
+              purchase_price or 0, sales_price or 0, now))
 
-            if new_qty < 0:
-                raise ValueError("Stock cannot be negative.")
-
-            cur.execute("""
-                UPDATE public.inventory 
-                SET stockqty=%s,
-                    purchaseprice=COALESCE(%s, purchaseprice),
-                    salesprice=COALESCE(%s, salesprice),
-                    lastupdate=%s
-                WHERE inventoryid=%s
-            """, (new_qty, purchase_price, sales_price, now, inv_id))
-
-        else:
-            if qty_delta < 0:
-                raise ValueError("Cannot reduce non-existing stock.")
-
-            cur.execute("""
-                INSERT INTO public.inventory 
-                (productid, warehouseid, stockqty, purchaseprice, salesprice, lastupdate)
-                VALUES (%s, %s, %s, %s, %s, %s)
-            """, (product_id, warehouse_id, qty_delta,
-                  purchase_price or 0, sales_price or 0, now))
-
-        conn.commit()
-
-    finally:
-        conn.close()
+    conn.commit()
+    conn.close()
 
 
 def update_inventory_row(inv_id: int, qty: int, purchase: float, sales: float):
+
     if qty < 0:
         raise ValueError("Stock cannot be negative.")
 
     conn = get_connection()
     cur = conn.cursor()
 
-    try:
-        cur.execute("""
-            UPDATE public.inventory 
-            SET stockqty=%s, 
-                purchaseprice=%s, 
-                salesprice=%s, 
-                lastupdate=%s
-            WHERE inventoryid=%s
-        """, (qty, purchase, sales, datetime.utcnow(), inv_id))
+    cur.execute("""
+        UPDATE public.inventory 
+        SET stockqty=%s, 
+            purchaseprice=%s, 
+            salesprice=%s, 
+            lastupdate=%s
+        WHERE inventoryid=%s
+    """, (qty, purchase, sales, datetime.utcnow(), inv_id))
 
-        conn.commit()
-
-    finally:
-        conn.close()
+    conn.commit()
+    conn.close()
 
 
 def delete_inventory_row(inv_id: int):
     conn = get_connection()
     cur = conn.cursor()
 
-    try:
-        cur.execute("""
-            DELETE FROM public.inventory 
-            WHERE inventoryid=%s
-        """, (inv_id,))
-        conn.commit()
+    cur.execute("""
+        DELETE FROM public.inventory 
+        WHERE inventoryid=%s
+    """, (inv_id,))
 
-    finally:
-        conn.close()
-
-
-# ============================================================
-# EDIT FORM
-# ============================================================
-
-def edit_inventory_dialog(inv_id: int):
-    df = get_inventory()
-    row = df[df.InventoryID == inv_id].iloc[0]
-
-    st.markdown("### ✏️ Edit Inventory Stock")
-    with st.form(f"edit_{inv_id}"):
-        qty = st.number_input("Stock Quantity", min_value=0, value=int(row.StockQty), step=1)
-        p_price = st.number_input("Purchase Price", min_value=0.0, value=float(row.PurchasePrice or 0))
-        s_price = st.number_input("Sales Price", min_value=0.0, value=float(row.SalesPrice or 0))
-
-        c1, c2 = st.columns(2)
-
-        if c1.form_submit_button("Update ✅", use_container_width=True):
-            update_inventory_row(inv_id, qty, p_price, s_price)
-            st.success("Updated!")
-            st.rerun()
-
-        if c2.form_submit_button("Cancel ❌", use_container_width=True):
-            st.rerun()
+    conn.commit()
+    conn.close()
 
 
 # ============================================================
@@ -154,6 +120,11 @@ def edit_inventory_dialog(inv_id: int):
 
 def main():
     st.title("Inventory Stock Management")
+
+    # init popup
+    if "show_edit" not in st.session_state:
+        st.session_state.show_edit = False
+        st.session_state.edit_id = None
 
     st.markdown("### Adjust Stock (IN / OUT)")
     conn = get_connection()
@@ -201,11 +172,11 @@ def main():
     st.markdown("### Current Stock")
 
     search = st.text_input("Search product", "")
-
     df = get_inventory(search)
 
     if not df.empty:
         for _, r in df.iterrows():
+
             with st.container(border=True):
                 cols = st.columns([1, 3, 2, 1.2, 1.4, 1.4, 2])
 
@@ -220,13 +191,57 @@ def main():
                     b1, b2 = st.columns(2)
 
                     if b1.button("✏️", key=f"e{r.InventoryID}", use_container_width=True):
-                        edit_inventory_dialog(r.InventoryID)
+                        st.session_state.show_edit = True
+                        st.session_state.edit_id = r.InventoryID
+                        st.rerun()
 
                     if b2.button("🗑️", key=f"d{r.InventoryID}", use_container_width=True, type="secondary"):
                         delete_inventory_row(r.InventoryID)
                         st.rerun()
 
     st.caption(f"Total records: {len(df)}")
+
+    # ✅ Popup Overlay inside main()
+    if st.session_state.show_edit:
+        df = get_inventory()
+        row = df[df.InventoryID == st.session_state.edit_id].iloc[0]
+
+        st.markdown("""
+            <div style="
+                position: fixed;
+                top: 0; left: 0;
+                width: 100%; height: 100%;
+                background: rgba(0,0,0,0.5);
+                z-index: 9999;
+                display: flex;
+                justify-content: center;
+                align-items: center;">
+        """, unsafe_allow_html=True)
+
+        with st.container():
+            st.markdown("""
+                <div style="background:white; padding:25px; border-radius:10px; width:450px;">
+            """, unsafe_allow_html=True)
+
+            with st.form("edit_form_popup"):
+                st.subheader("✏️ Edit Inventory")
+
+                qty = st.number_input("Stock Quantity", min_value=0, value=int(row.StockQty))
+                p_price = st.number_input("Purchase Price", min_value=0.0, value=float(row.PurchasePrice or 0))
+                s_price = st.number_input("Sales Price", min_value=0.0, value=float(row.SalesPrice or 0))
+
+                c1, c2 = st.columns(2)
+
+                if c1.form_submit_button("✅ Update"):
+                    update_inventory_row(st.session_state.edit_id, qty, p_price, s_price)
+                    st.session_state.show_edit = False
+                    st.rerun()
+
+                if c2.form_submit_button("❌ Cancel"):
+                    st.session_state.show_edit = False
+                    st.rerun()
+
+            st.markdown("</div></div>", unsafe_allow_html=True)
 
 
 def render_page():
