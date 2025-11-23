@@ -54,12 +54,19 @@ def get_categories():
 def create_product(sku, name, cat_id, price, active):
     conn = get_connection()
     cur = conn.cursor()
-    cur.execute("""
+
+    cur.execute(
+        """
         INSERT INTO public.products (sku, productname, categoryid, unitprice, isactive)
         VALUES (%s, %s, %s, %s, %s)
-    """, (sku, name, cat_id, price, int(bool(active))))
+        """,
+        (sku, name, cat_id, price, bool(active))
+    )
+
     conn.commit()
+    cur.close()
     conn.close()
+
 
 
 def update_product(pid, sku, name, category_id, price, active):
