@@ -126,7 +126,8 @@ def render_page():
     # ======================= SEARCH =========================
     st.markdown("<div class='card'>", unsafe_allow_html=True)
     search = st.text_input("🔍 Search Category", placeholder="Type to search...")
-    df = get_categories(search)
+    df = get_categories(search).drop_duplicates(subset=["categoryname"])
+
     st.markdown("</div>", unsafe_allow_html=True)
 
     # ======================= PAGINATION =======================
