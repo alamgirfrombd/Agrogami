@@ -5,8 +5,6 @@ from typing import Optional
 from db_connect import get_connection
 
 
-
-
 # ============================================================
 # DB FUNCTIONS
 # ============================================================
@@ -45,7 +43,6 @@ def upsert_inventory(product_id: int, warehouse_id: int, qty_delta: int,
     cur = conn.cursor()
 
     try:
-        # PostgreSQL placeholder FIXED (%s instead of ?)
         cur.execute("""
             SELECT inventoryid, stockqty 
             FROM public.inventory 
@@ -120,16 +117,14 @@ def delete_inventory_row(inv_id: int):
             DELETE FROM public.inventory 
             WHERE inventoryid=%s
         """, (inv_id,))
-
         conn.commit()
 
     finally:
         conn.close()
 
 
-
 # ============================================================
-# EDIT Pop Up DIALOG
+# EDIT FORM
 # ============================================================
 
 def edit_inventory_dialog(inv_id: int):
@@ -143,6 +138,7 @@ def edit_inventory_dialog(inv_id: int):
         s_price = st.number_input("Sales Price", min_value=0.0, value=float(row.SalesPrice or 0))
 
         c1, c2 = st.columns(2)
+
         if c1.form_submit_button("Update ✅", use_container_width=True):
             update_inventory_row(inv_id, qty, p_price, s_price)
             st.success("Updated!")
@@ -152,32 +148,28 @@ def edit_inventory_dialog(inv_id: int):
             st.rerun()
 
 
-
 # ============================================================
 # MAIN FUNCTION
 # ============================================================
+
 def main():
     st.title("Inventory Stock Management")
 
-    # Adjust Stock Form
     st.markdown("### Adjust Stock (IN / OUT)")
     conn = get_connection()
+
     prod_df = pd.read_sql("""
-        SELECT 
-            productid   AS "ProductId",
-            productname AS "ProductName",
-            sku         AS "SKU"
+        SELECT productid AS "ProductId", productname AS "ProductName", sku AS "SKU"
         FROM public.products
         ORDER BY productid;
     """, conn)
-    
+
     wh_df = pd.read_sql("""
-        SELECT 
-            warehouseid   AS "WarehouseId",
-            warehousename AS "WarehouseName"
+        SELECT warehouseid AS "WarehouseId", warehousename AS "WarehouseName"
         FROM public.warehouse
         ORDER BY warehouseid;
     """, conn)
+
     conn.close()
 
     if prod_df.empty or wh_df.empty:
@@ -187,6 +179,7 @@ def main():
     with st.expander("Add / Reduce Stock", expanded=True):
         with st.form("adjust"):
             pmap = {pid: f"{n} (SKU: {s})" for pid, n, s in zip(prod_df.ProductId, prod_df.ProductName, prod_df.SKU)}
+
             c1, c2 = st.columns(2)
             pid = c1.selectbox("Product", options=list(pmap.keys()), format_func=lambda x: pmap[x])
             wid = c2.selectbox("Warehouse", wh_df.WarehouseId, format_func=lambda x: wh_df.loc[wh_df.WarehouseId==x, "WarehouseName"].iloc[0])
@@ -201,55 +194,44 @@ def main():
 
             if st.form_submit_button("Apply", type="primary"):
                 delta = qty if move == "IN" else -qty
-                upsert_inventory(pid, wid, delta, pp if pp>0 else None, sp if sp>0 else None)
+                upsert_inventory(pid, wid, delta, pp if pp > 0 else None, sp if sp > 0 else None)
                 st.success("Done!")
                 st.rerun()
 
-
-
-    # Stock List
     st.markdown("### Current Stock")
-    search = st.text_input("Search product")
+
+    search = st.text_input("Search product", "")
+
     df = get_inventory(search)
 
     if not df.empty:
         for _, r in df.iterrows():
             with st.container(border=True):
                 cols = st.columns([1, 3, 2, 1.2, 1.4, 1.4, 2])
+
                 cols[0].write(f"**ID:** `{r.InventoryID}`")
                 cols[1].write(f"**{r.ProductName}**  \nSKU: `{r.SKU}`")
                 cols[2].write(f"**{r.WarehouseName}**")
                 cols[3].write(f"### {int(r.StockQty)}")
                 cols[4].write(f"**৳{r.PurchasePrice:.2f}**")
                 cols[5].write(f"**৳{r.SalesPrice:.2f}**")
-                
-                
+
                 with cols[6]:
-                    # 2 buttons side-by-side
                     b1, b2 = st.columns(2)
 
-                    with b1:
-                        edit = st.button("✏️", key=f"e{r.InventoryID}", use_container_width=True)
-
-                    with b2:
-                        delete = st.button("🗑️", key=f"d{r.InventoryID}", use_container_width=True, type="secondary")
-
-                    if edit:
+                    if b1.button("✏️", key=f"e{r.InventoryID}", use_container_width=True):
                         edit_inventory_dialog(r.InventoryID)
 
-                    if delete:
+                    if b2.button("🗑️", key=f"d{r.InventoryID}", use_container_width=True, type="secondary"):
                         delete_inventory_row(r.InventoryID)
                         st.rerun()
-
 
     st.caption(f"Total records: {len(df)}")
 
 
-# এই ফাংশনটা রাখতেই হবে – Streamlit Pages এর জন্য
 def render_page():
     main()
 
 
-# শুধুমাত্র যদি সরাসরি রান করো তাহলে (ডেভেলপমেন্টের জন্য)
 if __name__ == "__main__":
     main()
