@@ -133,7 +133,7 @@ footer{ background: #0f1724; color:#fff; padding:14px 18px; border-top:1px solid
         
       /* Sidebar background */
       section[data-testid="stSidebar"] {
-          background-color: #fdfdfd !important;
+          background-color: #efeef3 !important;
           padding: 20px;
       }
 

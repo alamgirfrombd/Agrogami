@@ -21,7 +21,7 @@ def render_page():
 # PAGE CONFIG
 # ===========================================================
 def setup_page():
-    st.set_page_config(page_title="User Permissions", page_icon="🔐", layout="wide")
+    #st.set_page_config(page_title="User Permissions", page_icon="🔐", layout="wide")
     st.markdown("<h1 class='page-title'>🔐 User Permissions</h1>", unsafe_allow_html=True)
 
 

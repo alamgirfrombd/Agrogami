@@ -12,7 +12,7 @@ import os
 # ===========================================================
 # STREAMLIT PAGE CONFIG
 # ===========================================================
-st.set_page_config(page_title="Roles Management", page_icon="👥", layout="wide")
+#st.set_page_config(page_title="Roles Management", page_icon="👥", layout="wide")
 
 
 # ===========================================================

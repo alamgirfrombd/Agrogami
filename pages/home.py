@@ -1,6 +1,7 @@
 import streamlit as st
 from app.layout.header import show_header
 from app.layout.footer import show_footer
+from pages.user_management._role_manager import render_page
 
 # ---------------------------
 # Page config + hide default multipage nav

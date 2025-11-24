@@ -1,23 +1,20 @@
 # ===========================================================
-# User Login History Page
-# Compatible with your existing Home.py routing
-# File: pages/user_management/_user_login_history.py
+# User Login History Page (Corrected Case Based on Query)
 # ===========================================================
 
 import os
 import pandas as pd
 import streamlit as st
-from datetime import datetime, date
+from datetime import datetime
 from db_connect import get_connection
 from fpdf import FPDF
 from io import BytesIO
 
 
 # ===========================================================
-# LOAD CUSTOM CSS
+# LOAD CSS
 # ===========================================================
 def load_css(file_name="style.css"):
-    """Load external CSS from app/static automatically."""
     current = os.path.abspath(__file__)
 
     while True:
@@ -29,32 +26,29 @@ def load_css(file_name="style.css"):
     if os.path.exists(css_path):
         with open(css_path, "r", encoding="utf-8") as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-    else:
-        st.warning(f"⚠ CSS not found at: {css_path}")
 
 
 # ===========================================================
-# LOAD LOGIN HISTORY DATA
+# LOAD LOGIN HISTORY (MATCHING QUERY)
 # ===========================================================
 def load_login_history():
     try:
         conn = get_connection()
         df = pd.read_sql("""
             SELECT 
-                lh.LoginID,
-                lh.UserID,
-                u.UserName,
-                u.FullName,
-                lh.LoginTime,
-                lh.LogoutTime,
-                lh.IPAddress,
-                lh.DeviceInfo,
-                lh.Status
-            FROM UserLoginHistory lh
-            LEFT JOIN Users u ON lh.UserID = u.UserID
-            ORDER BY lh.LoginID DESC
+                loginid,
+                userid,
+                logintime,
+                logouttime,
+                ipaddress,
+                deviceinfo,
+                status
+            FROM public.userloginhistory
+            ORDER BY loginid DESC
         """, conn)
         conn.close()
+
+        df.columns = df.columns.str.lower()
         return df
 
     except Exception as e:
@@ -63,7 +57,7 @@ def load_login_history():
 
 
 # ===========================================================
-# PDF EXPORT FUNCTION
+# PDF EXPORT
 # ===========================================================
 def export_pdf(df):
     pdf = FPDF()
@@ -74,36 +68,29 @@ def export_pdf(df):
 
     pdf.set_font("Arial", size=10)
 
-    # Table Header
-    header = ["UserName", "LoginTime", "LogoutTime", "IP", "Device", "Status"]
+    header = ["UserID", "LoginTime", "LogoutTime", "IP", "Device", "Status"]
     for col in header:
         pdf.cell(32, 10, col, border=1)
     pdf.ln()
 
-    # Table Rows
     for _, row in df.iterrows():
-        pdf.cell(32, 8, str(row["UserName"]), border=1)
-        pdf.cell(32, 8, str(row["LoginTime"]), border=1)
-        pdf.cell(32, 8, str(row["LogoutTime"]), border=1)
-        pdf.cell(32, 8, str(row["IPAddress"]), border=1)
-        pdf.cell(32, 8, str(row["DeviceInfo"])[:18], border=1)
-        pdf.cell(32, 8, str(row["Status"]), border=1)
+        pdf.cell(32, 8, str(row["userid"]), border=1)
+        pdf.cell(32, 8, str(row["logintime"]), border=1)
+        pdf.cell(32, 8, str(row["logouttime"]), border=1)
+        pdf.cell(32, 8, str(row["ipaddress"]), border=1)
+        pdf.cell(32, 8, str(row["deviceinfo"])[:18], border=1)
+        pdf.cell(32, 8, str(row["status"]), border=1)
         pdf.ln()
 
-    # FIX: Get PDF as bytes
     pdf_bytes = pdf.output(dest="S").encode("latin-1")
-
-    # Return as BytesIO buffer
     return BytesIO(pdf_bytes)
 
 
-
 # ===========================================================
-# MAIN RENDER FUNCTION
+# MAIN
 # ===========================================================
 def render_page():
 
-    st.set_page_config(page_title="User Login History", page_icon="📅", layout="wide")
     load_css()
 
     st.markdown("<h1 class='page-title'>📅 User Login History</h1>", unsafe_allow_html=True)
@@ -115,54 +102,51 @@ def render_page():
         return
 
     # -------------------------------------------------------
-    # SEARCH / FILTER AREA
+    # FILTERS
     # -------------------------------------------------------
     st.subheader("🔍 Filter Login History")
 
     col1, col2, col3 = st.columns(3)
 
-    # Filter 1: User
     user_filter = col1.selectbox(
-        "Filter by User", 
-        ["All"] + sorted(df["UserName"].dropna().unique().tolist())
+        "Filter by User",
+        ["All"] + sorted(df["userid"].astype(str).unique().tolist())
     )
 
-    # Filter 2: Status
     status_filter = col2.selectbox(
         "Filter by Status",
-        ["All", "Success", "Failed"]
+        ["All"] + sorted(df["status"].dropna().unique().tolist())
     )
 
-    # Filter 3: Date Range
-    default_start = df["LoginTime"].min().date()
-    default_end = df["LoginTime"].max().date()
+    default_start = df["logintime"].min().date()
+    default_end = df["logintime"].max().date()
 
     date_range = col3.date_input(
         "Login Date Range",
         value=[default_start, default_end]
     )
 
-    # Apply filters
     filtered_df = df.copy()
 
     if user_filter != "All":
-        filtered_df = filtered_df[filtered_df["UserName"] == user_filter]
+        filtered_df = filtered_df[filtered_df["userid"].astype(str) == user_filter]
 
     if status_filter != "All":
-        filtered_df = filtered_df[filtered_df["Status"] == status_filter]
+        filtered_df = filtered_df[filtered_df["status"] == status_filter]
 
     if len(date_range) == 2:
         start, end = date_range
         filtered_df = filtered_df[
-            (filtered_df["LoginTime"].dt.date >= start) &
-            (filtered_df["LoginTime"].dt.date <= end)
+            (filtered_df["logintime"].dt.date >= start) &
+            (filtered_df["logintime"].dt.date <= end)
         ]
 
     # -------------------------------------------------------
-    # EXPORT BUTTONS
+    # EXPORT
     # -------------------------------------------------------
     st.divider()
-    colA, colB = st.columns([1, 1])
+
+    colA, colB = st.columns(2)
 
     with colA:
         st.download_button(
@@ -173,16 +157,15 @@ def render_page():
         )
 
     with colB:
-        pdf_data = export_pdf(filtered_df)
         st.download_button(
             "📄 Export PDF",
-            pdf_data,
+            export_pdf(filtered_df),
             file_name="login_history.pdf",
             mime="application/pdf"
         )
 
     # -------------------------------------------------------
-    #📌 TABLE DISPLAY
+    # TABLE
     # -------------------------------------------------------
     st.subheader("📊 Login History Records")
 
@@ -193,16 +176,15 @@ def render_page():
     )
 
     # -------------------------------------------------------
-    # VIEW DETAILS SECTION
+    # DETAILS VIEW
     # -------------------------------------------------------
     st.markdown("### 🔍 View Login Details")
 
     for _, row in filtered_df.iterrows():
-        with st.expander(f"{row['UserName']} — {row['LoginTime']}"):
-            st.write(f"**User:** {row['FullName']} ({row['UserName']})")
-            st.write(f"**Login Time:** {row['LoginTime']}")
-            st.write(f"**Logout Time:** {row['LogoutTime']}")
-            st.write(f"**IP Address:** {row['IPAddress']}")
-            st.write(f"**Device Info:** {row['DeviceInfo']}")
-            st.write(f"**Status:** {row['Status']}")
-# ==================================================
+        with st.expander(f"{row['userid']} — {row['logintime']}"):
+            st.write(f"**User ID:** {row['userid']}")
+            st.write(f"**Login Time:** {row['logintime']}")
+            st.write(f"**Logout Time:** {row['logouttime']}")
+            st.write(f"**IP Address:** {row['ipaddress']}")
+            st.write(f"**Device Info:** {row['deviceinfo']}")
+            st.write(f"**Status:** {row['status']}")

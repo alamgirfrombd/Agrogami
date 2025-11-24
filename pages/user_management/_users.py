@@ -12,7 +12,7 @@ import bcrypt
 # -----------------------------------------------------------
 # PAGE CONFIG
 # -----------------------------------------------------------
-st.set_page_config(page_title="Users", page_icon="👥", layout="wide")
+#st.set_page_config(page_title="Users", page_icon="👥", layout="wide")
 
 
 # -----------------------------------------------------------
@@ -127,7 +127,7 @@ def create_user(UserName, FullName, Email, PhoneNumber, raw_password, RoleID, Is
             INSERT INTO public.users
             (username, fullname, email, phonenumber, passwordhash, roleid, isactive, createdat, updatedat)
             VALUES (%s, %s, %s, %s, %s, %s, %s, NOW(), NOW())
-        """, (UserName, FullName, Email, PhoneNumber, hashed_pass, int(RoleID), int(IsActive)))
+        """, (UserName, FullName, Email, PhoneNumber, hashed_pass, int(RoleID), bool(IsActive)))
 
         conn.commit()
         conn.close()
