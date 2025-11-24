@@ -152,7 +152,7 @@ def generate_order_number():
     today = datetime.now().strftime("%Y%m%d")
 
     df = pd.read_sql("""
-        SELECT ordernumber 
+        SELECT ordernumber AS "OrderNumber"
         FROM public.orders
         WHERE ordernumber LIKE %s
         ORDER BY ordernumber DESC
