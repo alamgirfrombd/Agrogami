@@ -72,7 +72,7 @@ def render_sidebar():
                 label_visibility="collapsed",
             )
 
-        # INVENTORY
+        # INVENTORY MANAGEMENT
         with st.expander("📦 Inventory Management", expanded=False):
             st.radio(
                 "Inventory Pages",
@@ -81,6 +81,7 @@ def render_sidebar():
                     "Products",
                     "Warehouse",
                     "Inventory Stock",
+                    "IMEI Units",
                 ],
                 key="radio_inventory",
                 on_change=_on_radio_change,
@@ -88,7 +89,22 @@ def render_sidebar():
                 label_visibility="collapsed",
             )
 
-        # SALES
+        # PURCHASE MANAGEMENT
+        with st.expander("🛒 Purchase Management", expanded=False):
+            st.radio(
+                "Purchase Pages",
+                [
+                    "Suppliers",
+                    "Purchase Orders",
+                    "Purchase Items",
+                ],
+                key="radio_purchase",
+                on_change=_on_radio_change,
+                args=("Purchase Management", "radio_purchase"),
+                label_visibility="collapsed",
+            )
+
+        # SALES MANAGEMENT
         with st.expander("💰 Sales Management", expanded=False):
             st.radio(
                 "Sales Pages",
@@ -103,6 +119,45 @@ def render_sidebar():
                 args=("Sales Management", "radio_sales"),
                 label_visibility="collapsed",
             )
+
+        # SERVICE & WARRANTY
+        with st.expander("🛠 Service & Warranty", expanded=False):
+            st.radio(
+                "Service Pages",
+                [
+                    "Warranty Claims",
+                    "Service Jobs",
+                    "Service Parts Used",
+                ],
+                key="radio_service",
+                on_change=_on_radio_change,
+                args=("Service & Warranty", "radio_service"),
+                label_visibility="collapsed",
+            )
+
+
+         # ACCOUNTING
+# ACCOUNTING
+    with st.expander("💵 Accounting", expanded=False):
+        st.radio(
+            "",
+            [
+                "Chart of Accounts",
+                "Voucher Entry",
+                "Voucher List",
+                "Ledger",
+                "Cash Book",
+                "Bank Book",
+                "Trial Balance",
+                "Income Statement",
+                "Balance Sheet",
+            ],
+            key="radio_accounting",
+            on_change=_on_radio_change,
+            args=("Accounting", "radio_accounting"),
+            label_visibility="collapsed",
+        )
+
 
         # PROFILE
         with st.expander("🙍 Profile", expanded=False):
